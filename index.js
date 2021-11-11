@@ -1,8 +1,11 @@
 // import express
-const { response, request } = require('express');
 const express = require('express');
+
 // set instance of express
 const app = express();
+
+// activate json-parser
+app.use(express.json());
 
 let persons = [
   { 
@@ -51,6 +54,17 @@ app.get('/info', (request, response) => {
   response.write(`<p>${responseTime}</p>`);
   response.end();
 });
+
+// add person
+app.post('/api/persons/', (request, response) => {
+  const id = Math.floor(Math.random()*1000000);
+  console.log(id);
+  const person = request.body;
+  person.id = id;
+  persons = persons.concat(person);
+  response.json(person);
+  console.log(request.get('Content-Type'));
+})
 
 // delete person
 app.delete('/api/persons/:id', (request, response) => {
