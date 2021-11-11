@@ -44,7 +44,7 @@ app.get('/api/persons', (request, response) => {
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id);
   const person = persons.find(p => p.id === id);
-  person ? response.json(person) : response.status(404).end();
+  person ? response.json(person) : response.status(404).send('That person does not exist.').end();
 })
 
 // define info route
@@ -57,13 +57,22 @@ app.get('/info', (request, response) => {
 
 // add person
 app.post('/api/persons/', (request, response) => {
-  const id = Math.floor(Math.random()*1000000);
-  console.log(id);
   const person = request.body;
-  person.id = id;
+
+  if (!person.name || !person.number) {
+    return response.status(400).json({
+      error: 'Name or number is missing.'
+    });
+  }
+
+  if (persons.find(p => p.name === person.name)) {
+    return response.status(409).json({
+      error: 'The name of this person is already added.'
+    })
+  }
+  person.id = Math.floor(Math.random()*1000000);
   persons = persons.concat(person);
   response.json(person);
-  console.log(request.get('Content-Type'));
 })
 
 // delete person
