@@ -1,5 +1,6 @@
-// import express:
+// import express
 const express = require('express');
+// set instance of express
 const app = express();
 
 let persons = [
@@ -25,7 +26,7 @@ let persons = [
   }
 ];
 
-// define routes:
+// define routes
 app.get('/', (request, response) => {
   response.send('<h1>Phonebook</h1>')
 });
@@ -34,7 +35,14 @@ app.get('/api/persons', (request, response) => {
   response.json(persons);
 });
 
-// listen to HTTP requests sent to port 3001:
+app.get('/info', (request, response) => {
+  const responseTime = new Date();
+  response.write(`<p>Phonebook has info for ${persons.length} people</p>`);
+  response.write(`<p>${responseTime}</p>`);
+  response.end();
+});
+
+// listen to HTTP requests
 const PORT = 3001;
 app.listen(PORT);
 console.log(`Server running on port ${PORT}`);
