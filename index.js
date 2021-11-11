@@ -1,5 +1,5 @@
 // import express
-const { response } = require('express');
+const { response, request } = require('express');
 const express = require('express');
 // set instance of express
 const app = express();
@@ -51,6 +51,13 @@ app.get('/info', (request, response) => {
   response.write(`<p>${responseTime}</p>`);
   response.end();
 });
+
+// delete person
+app.delete('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id);
+  persons = persons.filter(p => p.id !== id);
+  response.status(204).end();
+})
 
 // listen to HTTP requests
 const PORT = 3001;
