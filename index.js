@@ -1,11 +1,15 @@
-// import express
+// import express and morgan
 const express = require('express');
+const morgan = require('morgan');
 
 // set instance of express
 const app = express();
 
 // activate json-parser
 app.use(express.json());
+
+// activate morgan
+app.use(morgan('tiny'));
 
 let persons = [
   { 
