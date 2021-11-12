@@ -1,6 +1,7 @@
-// import express and morgan
+// import express, morgan, cors
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 
 // set instance of express
 const app = express();
@@ -14,6 +15,9 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :p
 morgan.token('post', function(request, response) {
   return Object.keys(request.body).length > 0 ? JSON.stringify(request.body) : " ";
 });
+
+// activate cors
+app.use(cors());
 
 let persons = [
   { 
