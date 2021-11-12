@@ -9,7 +9,11 @@ const app = express();
 app.use(express.json());
 
 // activate morgan
-app.use(morgan('tiny'));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post'));
+// only show 'post' token for POST requests
+morgan.token('post', function(request, response) {
+  return Object.keys(request.body).length > 0 ? JSON.stringify(request.body) : " ";
+});
 
 let persons = [
   { 
@@ -61,6 +65,7 @@ app.get('/info', (request, response) => {
 
 // add person
 app.post('/api/persons/', (request, response) => {
+
   const person = request.body;
 
   if (!person.name || !person.number) {
