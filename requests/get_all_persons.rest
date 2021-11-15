@@ -1,1 +1,1 @@
-GET https://immense-beach-23795.herokuapp.com/api/persons
+GET http://localhost:3001/api/persons
