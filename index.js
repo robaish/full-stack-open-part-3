@@ -19,6 +19,9 @@ morgan.token('post', function(request, response) {
 // activate cors
 app.use(cors());
 
+// activate static
+app.use(express.static('build'));
+
 let persons = [
   { 
     "id": 1,
