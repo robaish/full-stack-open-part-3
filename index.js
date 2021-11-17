@@ -95,7 +95,24 @@ app.delete('/api/persons/:id', (request, response, next) => {
   .then(result => {
     response.status(204).end();
   })
-  .catch(error => next(error))
+  .catch(error => next(error));
+});
+
+// update person
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body;
+
+  const person = {
+    name: body.name,
+    number: body.number
+  }
+  
+  Person
+  .findByIdAndUpdate(request.params.id, person, {new: true})
+  .then(updatedPerson => {
+    response.json(updatedPerson);
+  })
+  .catch(error => next(error));
 });
 
 // handle requests with unknown endpoint
@@ -115,7 +132,7 @@ const errorHandler = (error, request, response, next) => {
   next(error);
 }
 
-// keep here, has to be last loaded middleware
+// keep here, has to be the last loaded middleware
 app.use(errorHandler)
 
 // listen to HTTP requests
