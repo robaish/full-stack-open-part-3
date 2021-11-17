@@ -62,10 +62,13 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 // define info route
 app.get('/info', (request, response) => {
-  const responseTime = new Date();
-  response.write(`<p>Phonebook has info for ${persons.length} people</p>`);
-  response.write(`<p>${responseTime}</p>`);
-  response.end();
+  Person.find({}).then(people => {
+    const responseTime = new Date();
+    const personCount = people.length;
+    response.write(`<p>Phonebook has info for ${personCount} people</p>`);
+    response.write(`<p>${responseTime}</p>`);
+    response.end();
+  });
 });
 
 // add person
