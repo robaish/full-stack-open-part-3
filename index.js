@@ -8,6 +8,17 @@ const Person = require('./models/person');
 // set instance of express
 const app = express();
 
+// prints every request
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method);
+  console.log('Path:  ', request.path);
+  console.log('Body:  ', request.body);
+  console.log('---');
+  next();
+}
+// activate static
+app.use(express.static('build'));
+
 // activate json-parser
 app.use(express.json());
 
@@ -21,8 +32,8 @@ morgan.token('post', function(request, response) {
 // activate cors
 app.use(cors());
 
-// activate static
-app.use(express.static('build'));
+// activate requestlogger
+app.use(requestLogger);
 
 // define root route
 app.get('/', (request, response) => {
@@ -37,15 +48,16 @@ app.get('/api/persons', (request, response) => {
 });
 
 // get single person
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
   .then(person => {
-    response.json(person);
+    if (person) {
+      response.json(person);
+    } else {
+      response.status(404).send('That person is not in the phonebook.').end();
+    }
   })
-  .catch(error => {
-    console.log(error)
-    response.status(404).send('That person is not in the phonebook.').end()
-  })
+  .catch(error => next(error));
 });
 
 // define info route
@@ -77,11 +89,34 @@ app.post('/api/persons/', (request, response) => {
 })
 
 // delete person
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  persons = persons.filter(p => p.id !== id);
-  response.status(204).end();
-})
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person
+  .findByIdAndRemove(request.params.id)
+  .then(result => {
+    response.status(204).end();
+  })
+  .catch(error => next(error))
+});
+
+// handle requests with unknown endpoint
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' });
+}
+
+app.use(unknownEndpoint);
+
+// error handling
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' });
+  }
+  next(error);
+}
+
+// keep here, has to be last loaded middleware
+app.use(errorHandler)
 
 // listen to HTTP requests
 const PORT = process.env.PORT
