@@ -42,8 +42,8 @@ app.get('/', (request, response) => {
 
 // get all persons
 app.get('/api/persons', (request, response) => {
-  Person.find({}).then(people => {
-    response.json(people);
+  Person.find({}).then(persons => {
+    response.json(persons);
   })
 });
 
@@ -62,10 +62,10 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 // define info route
 app.get('/info', (request, response) => {
-  Person.find({}).then(people => {
+  Person.find({}).then(persons => {
     const responseTime = new Date();
-    const personCount = people.length;
-    response.write(`<p>Phonebook has info for ${personCount} people</p>`);
+    const personCount = persons.length;
+    response.write(`<p>The phonebook has info for ${personCount} people.</p>`);
     response.write(`<p>${responseTime}</p>`);
     response.end();
   });
@@ -140,7 +140,7 @@ const errorHandler = (error, request, response, next) => {
 app.use(errorHandler);
 
 // listen to HTTP requests
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 });
